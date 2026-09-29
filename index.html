@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navami Ajay — Creative Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F3EA;
+    --paper-2:#F1EBDC;
+    --ink:#2C2822;
+    --ink-soft:#726A5E;
+    --rose:#D98CA1;
+    --rose-deep:#B85F79;
+    --gold:#C9A227;
+    --line:#2C2822;
+    --card:#FFFDF7;
+    --radius:2px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Poppins',sans-serif;
+    overflow-x:hidden;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(44,40,34,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+
+  /* ---------- reusable doodle motifs ---------- */
+  .checker{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    grid-template-rows:repeat(4,1fr);
+    width:100%;height:100%;
+  }
+  .checker div:nth-child(odd){background:var(--ink);}
+  .checker div:nth-child(even){background:transparent;}
+  .checker div{ }
+  /* correct checkerboard alternation per row */
+  .checker div{background:transparent;}
+  .checker div.on{background:var(--ink);}
+
+  .sparkle{position:absolute;color:var(--gold);opacity:0.85;pointer-events:none;}
+  .sparkle svg{width:100%;height:100%;display:block;}
+
+  /* ---------- top nav ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px 6vw;
+    z-index:50;
+    mix-blend-mode:normal;
+    background:linear-gradient(to bottom, rgba(247,243,234,0.92), rgba(247,243,234,0));
+    backdrop-filter:blur(2px);
+  }
+  .nav-mark{
+    font-family:'Caveat',cursive;
+    font-size:1.6rem;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .nav-links{display:flex;gap:28px;list-style:none;}
+  .nav-links a{
+    color:var(--ink-soft);
+    text-decoration:none;
+    font-size:0.82rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    font-weight:500;
+    position:relative;
+    transition:color 0.25s ease;
+  }
+  .nav-links a:hover{color:var(--rose-deep);}
+  .nav-links a::after{
+    content:'';position:absolute;left:0;bottom:-4px;width:0;height:1px;
+    background:var(--rose-deep);transition:width 0.25s ease;
+  }
+  .nav-links a:hover::after{width:100%;}
+
+  @media (max-width:720px){
+    .nav-links{display:none;}
+  }
+
+  /* ================= HERO — recreation of the cover sketch ================= */
+  .hero{
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:8vh 5vw;
+    position:relative;
+  }
+
+  .frame-outer{
+    position:relative;
+    width:min(760px, 92vw);
+    aspect-ratio:5/6.2;
+    border:1.5px solid var(--ink);
+    border-radius:6px;
+    background:var(--card);
+    box-shadow:0 30px 60px -20px rgba(44,40,34,0.18);
+    overflow:hidden;
+  }
+
+  /* corner checkerboards, torn-paper style via clip-path */
+  .corner{
+    position:absolute;
+    width:34%;
+    height:26%;
+    z-index:2;
+  }
+  .corner.tl{
+    top:0;right:0;
+    clip-path:polygon(15% 0%, 100% 0%, 100% 100%, 55% 100%, 55% 55%, 30% 55%, 30% 30%, 0% 30%, 0% 15%);
+  }
+  .corner.bl{
+    bottom:0;left:0;
+    clip-path:polygon(0% 0%, 45% 0%, 45% 40%, 70% 40%, 70% 70%, 100% 70%, 100% 100%, 0% 100%);
+  }
+  .checker-grid{
+    width:100%;height:100%;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    grid-template-rows:repeat(5,1fr);
+  }
+  .checker-grid span{background:var(--ink);}
+  .checker-grid span.odd{background:transparent;}
+
+  .cat-doodle{
+    position:absolute;top:6%;left:5%;
+    width:16%;
+    z-index:2;
+  }
+  .cat-doodle svg{width:100%;height:auto;overflow:visible;}
+
+  .butterfly-doodle{
+    position:absolute;bottom:6%;right:7%;
+    width:15%;
+    z-index:2;
+  }
+  .butterfly-doodle svg{width:100%;height:auto;}
+
+  .spark-a{top:30%;left:10%;width:26px;height:26px;transform:rotate(-8deg);}
+  .spark-b{top:44%;right:16%;width:20px;height:20px;}
+  .spark-c{top:60%;right:20%;width:14px;height:14px;}
+  .spark-d{bottom:20%;left:34%;width:18px;height:18px;}
+
+  .frame-inner{
+    position:absolute;
+    inset:15% 12%;
+    border:1.5px dashed var(--ink);
+    border-radius:2px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    z-index:3;
+    padding:6%;
+  }
+
+  .rule{
+    display:flex;flex-direction:column;gap:3px;width:60%;margin:0 auto;
+  }
+  .rule span{display:block;height:1.5px;background:var(--ink);width:100%;}
+
+  .hero-title{
+    font-family:'Caveat',cursive;
+    font-weight:700;
+    font-size:clamp(2.6rem, 8vw, 4.4rem);
+    line-height:0.95;
+    margin:14px 0;
+    color:var(--ink);
+  }
+
+  .name-badge{
+    display:inline-block;
+    margin-top:6px;
+    padding:7px 22px;
+    border:1.3px solid var(--ink);
+    border-radius:999px;
+    font-family:'Poppins',sans-serif;
+    font-size:0.72rem;
+    font-weight:600;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    background:var(--card);
+  }
+
+  .scroll-cue{
+    position:absolute;
+    bottom:-56px;left:50%;transform:translateX(-50%);
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+  }
+  .scroll-cue .stem{width:1px;height:26px;background:var(--ink-soft);
+    animation:stretch 1.8s ease-in-out infinite;}
+  @keyframes stretch{
+    0%,100%{transform:scaleY(0.6);opacity:0.4;}
+    50%{transform:scaleY(1);opacity:1;}
+  }
+
+  /* ================= SECTION shared styles ================= */
+  section{
+    padding:110px 8vw;
+    position:relative;
+  }
+  .eyebrow{
+    font-family:'Poppins',sans-serif;
+    font-size:0.74rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--rose-deep);
+    font-weight:600;
+    margin-bottom:14px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{
+    content:'';width:22px;height:1.5px;background:var(--rose-deep);
+  }
+  h2.section-title{
+    font-family:'Caveat',cursive;
+    font-weight:700;
+    font-size:clamp(2.4rem,5vw,3.6rem);
+    margin-bottom:26px;
+  }
+  .section-lead{
+    max-width:640px;
+    color:var(--ink-soft);
+    font-size:1rem;
+    line-height:1.75;
+    font-weight:300;
+  }
+
+  /* ---------- About ---------- */
+  .about-wrap{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+    align-items:center;
+  }
+  @media (max-width:860px){ .about-wrap{grid-template-columns:1fr;} }
+
+  .about-card{
+    position:relative;
+    border:1.5px dashed var(--ink);
+    border-radius:4px;
+    padding:38px 34px;
+    background:var(--card);
+  }
+  .about-card::before,.about-card::after{
+    content:'';position:absolute;width:16px;height:16px;
+    border:1.5px solid var(--ink);border-radius:50%;
+  }
+  .about-card::before{top:-9px;left:24px;background:var(--rose);}
+  .about-card::after{bottom:-9px;right:24px;background:var(--gold);}
+  .about-card p{
+    font-size:0.98rem;line-height:1.85;color:var(--ink);font-weight:300;
+    margin-bottom:14px;
+  }
+  .about-card p:last-child{margin-bottom:0;}
+  .about-card strong{font-weight:600;}
+
+  .stat-row{
+    display:flex;gap:34px;margin-top:26px;flex-wrap:wrap;
+  }
+  .stat{
+    font-family:'Caveat',cursive;
+  }
+  .stat .num{font-size:2.4rem;font-weight:700;color:var(--rose-deep);line-height:1;}
+  .stat .label{
+    font-family:'Poppins',sans-serif;
+    font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--ink-soft);margin-top:4px;
+  }
+
+  /* ---------- Skills ---------- */
+  .skills-wrap{
+    display:flex;flex-wrap:wrap;gap:14px;
+    max-width:820px;
+  }
+  .skill-chip{
+    border:1.3px dashed var(--ink);
+    border-radius:999px;
+    padding:10px 20px;
+    font-size:0.86rem;
+    font-weight:500;
+    background:var(--card);
+    position:relative;
+    transition:transform 0.25s ease, background 0.25s ease;
+    cursor:default;
+    box-shadow:0 4px 10px -6px rgba(44,40,34,0.3);
+  }
+  .skill-chip:nth-child(3n+1){transform:rotate(-2deg);}
+  .skill-chip:nth-child(3n+2){transform:rotate(1.5deg);}
+  .skill-chip:nth-child(3n){transform:rotate(-1deg);}
+  .skill-chip:hover{
+    background:var(--rose);
+    color:var(--paper);
+    transform:translateY(-3px) rotate(0deg) scale(1.05);
+  }
+
+  /* ---------- Work gallery ---------- */
+  .work-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:32px;
+    margin-top:20px;
+  }
+  @media (max-width:960px){ .work-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){ .work-grid{grid-template-columns:1fr;} }
+
+  .work-card{
+    background:var(--card);
+    border:1.5px solid var(--ink);
+    border-radius:4px;
+    overflow:visible;
+    transition:transform 0.3s ease, box-shadow 0.3s ease;
+    position:relative;
+    box-shadow:0 8px 20px -12px rgba(44,40,34,0.2);
+  }
+  .work-card:nth-child(2n){transform:rotate(-1.3deg);}
+  .work-card:nth-child(2n+1){transform:rotate(1.1deg);}
+  .work-card:nth-child(3n){transform:rotate(-0.6deg);}
+  .work-card:hover{
+    transform:translateY(-6px) rotate(0deg) scale(1.02);
+    box-shadow:0 24px 44px -16px rgba(44,40,34,0.28);
+    z-index:10;
+  }
+  .work-thumb{overflow:hidden;}
+  .work-thumb{
+    height:190px;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+    overflow:hidden;
+    border-bottom:1.5px dashed var(--ink);
+  }
+  .work-thumb svg{width:60%;height:60%;}
+  .work-tag{
+    position:absolute;top:12px;left:12px;
+    font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
+    background:var(--ink);color:var(--paper);
+    padding:4px 10px;border-radius:999px;font-weight:600;
+  }
+  .work-body{padding:22px 22px 26px;}
+  .work-body h3{
+    font-family:'Caveat',cursive;font-size:1.6rem;font-weight:700;margin-bottom:6px;
+  }
+  .work-body p{font-size:0.85rem;color:var(--ink-soft);line-height:1.6;font-weight:300;}
+
+  /* ---------- Contact ---------- */
+  .contact-frame{
+    border:1.5px dashed var(--ink);
+    border-radius:6px;
+    padding:70px 8vw;
+    text-align:center;
+    position:relative;
+    background:var(--card);
+    overflow:hidden;
+  }
+  .contact-frame .corner-mini{
+    position:absolute;width:70px;height:70px;
+  }
+  .contact-frame .corner-mini.tl{top:-1px;left:-1px;
+    clip-path:polygon(0 0,100% 0,0 100%);}
+  .contact-frame .corner-mini.br{bottom:-1px;right:-1px;
+    clip-path:polygon(100% 100%,0 100%,100% 0);}
+  .contact-frame .corner-mini .checker-grid span{background:var(--ink);}
+
+  .contact-frame h2{
+    font-family:'Caveat',cursive;font-weight:700;
+    font-size:clamp(2.4rem,6vw,3.8rem);
+    margin-bottom:18px;
+  }
+  .contact-frame p{color:var(--ink-soft);font-weight:300;margin-bottom:34px;}
+
+  .cta-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:13px 30px;
+    border-radius:999px;
+    font-size:0.85rem;font-weight:600;letter-spacing:0.03em;
+    text-decoration:none;
+    transition:all 0.25s ease;
+    border:1.5px solid var(--ink);
+  }
+  .btn-solid{background:var(--ink);color:var(--paper);}
+  .btn-solid:hover{background:var(--rose-deep);border-color:var(--rose-deep);}
+  .btn-outline{background:transparent;color:var(--ink);}
+  .btn-outline:hover{background:var(--ink);color:var(--paper);}
+
+  footer{
+    text-align:center;
+    padding:34px 8vw 46px;
+    font-size:0.76rem;
+    color:var(--ink-soft);
+    letter-spacing:0.04em;
+  }
+  footer span{font-family:'Caveat',cursive;font-size:1rem;font-weight:600;color:var(--ink);}
+
+  /* ---------- scrapbook: washi tape ---------- */
+  .washi{
+    position:absolute;
+    height:26px;
+    background:repeating-linear-gradient(135deg, var(--rose) 0px, var(--rose) 8px, #f2c9d4 8px, #f2c9d4 16px);
+    opacity:0.75;
+    box-shadow:0 2px 4px rgba(44,40,34,0.15);
+    z-index:5;
+  }
+  .washi::before, .washi::after{
+    content:'';position:absolute;top:0;bottom:0;width:6px;
+  }
+  .washi.gold{
+    background:repeating-linear-gradient(135deg, var(--gold) 0px, var(--gold) 8px, #e8d38a 8px, #e8d38a 16px);
+  }
+  .washi.sage{
+    background:repeating-linear-gradient(135deg, #94a37c 0px, #94a37c 8px, #c3cdb0 8px, #c3cdb0 16px);
+  }
+
+  /* ---------- scrapbook: torn paper divider ---------- */
+  .torn-divider{
+    height:46px;
+    width:100%;
+    background:var(--paper-2);
+    clip-path:polygon(0% 40%,4% 20%,8% 45%,13% 15%,18% 42%,23% 22%,28% 48%,33% 18%,38% 44%,43% 24%,48% 46%,53% 16%,58% 42%,63% 20%,68% 48%,73% 22%,78% 44%,83% 18%,88% 46%,93% 20%,97% 44%,100% 25%,100% 100%,0% 100%);
+    position:relative;
+  }
+
+  /* ---------- floral doodles ---------- */
+  .flora{position:absolute;pointer-events:none;z-index:2;}
+  .flora svg{width:100%;height:100%;display:block;}
+
+  /* ---------- polaroid-style work card ---------- */
+  .work-card{position:relative;background:var(--card);}
+  .work-card::before{
+    content:'';
+    position:absolute;top:-12px;left:50%;
+    width:60px;height:22px;
+    background:repeating-linear-gradient(135deg, var(--rose) 0px, var(--rose) 7px, #f2c9d4 7px, #f2c9d4 14px);
+    opacity:0.8;
+    box-shadow:0 2px 4px rgba(44,40,34,0.15);
+    z-index:6;
+    transform:translateX(-50%) rotate(-4deg);
+  }
+  .work-card:nth-child(3n+2)::before{
+    transform:translateX(-50%) rotate(4deg);
+    background:repeating-linear-gradient(135deg, var(--gold) 0px, var(--gold) 7px, #e8d38a 7px, #e8d38a 14px);
+  }
+  .work-card:nth-child(3n)::before{
+    transform:translateX(-50%) rotate(-7deg);
+    background:repeating-linear-gradient(135deg, #94a37c 0px, #94a37c 7px, #c3cdb0 7px, #c3cdb0 14px);
+  }
+
+  .stitch{
+    border-top:none;
+    border-bottom:2px dashed var(--ink-soft);
+    opacity:0.5;
+  }
+
+  .paperclip{
+    position:absolute;top:-18px;right:18px;width:30px;height:46px;z-index:6;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,0.15));
+  }
+
+  ::selection{background:var(--rose);color:var(--paper);}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .scroll-cue .stem{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-mark">Navami Ajay</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="frame-outer">
+
+    <div class="corner tl">
+      <div class="checker-grid" id="checkerTL"></div>
+    </div>
+    <div class="corner bl">
+      <div class="checker-grid" id="checkerBL"></div>
+    </div>
+
+    <!-- cat doodle -->
+    <div class="cat-doodle">
+      <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 55 C8 30, 20 8, 30 22 C40 6, 55 6, 62 24 C74 10, 88 30, 82 55 C82 78, 62 90, 46 90 C28 90, 12 78, 12 55Z" stroke="var(--ink)" stroke-width="2.2" fill="var(--card)"/>
+        <circle cx="34" cy="52" r="4.5" fill="var(--ink)"/>
+        <circle cx="60" cy="52" r="4.5" fill="var(--ink)"/>
+        <path d="M40 66 Q47 72 54 66" stroke="var(--ink)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M6 46 Q-4 40 2 30" stroke="var(--ink)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M14 66 Q2 68 -2 60" stroke="var(--ink)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <!-- butterfly doodle -->
+    <div class="butterfly-doodle">
+      <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M58 20 C40 4, 10 14, 14 40 C16 56, 36 58, 56 46 Z" stroke="var(--ink)" stroke-width="2" fill="var(--rose)" opacity="0.85"/>
+        <path d="M62 22 C80 6, 110 16, 106 42 C104 58, 84 60, 64 48 Z" stroke="var(--ink)" stroke-width="2" fill="var(--rose)" opacity="0.85"/>
+        <path d="M56 46 C40 56, 18 62, 20 76 C22 88, 42 86, 56 70 Z" stroke="var(--ink)" stroke-width="2" fill="var(--gold)" opacity="0.7"/>
+        <path d="M64 48 C80 58, 100 64, 98 78 C96 90, 76 88, 62 72 Z" stroke="var(--ink)" stroke-width="2" fill="var(--gold)" opacity="0.7"/>
+        <line x1="58" y1="18" x2="62" y2="76" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M56 18 Q50 8 42 10" stroke="var(--ink)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <path d="M62 18 Q68 8 76 10" stroke="var(--ink)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <!-- sparkles -->
+    <div class="sparkle spark-a"><svg viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="var(--gold)"/></svg></div>
+    <div class="sparkle spark-b"><svg viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="var(--ink)"/></svg></div>
+    <div class="sparkle spark-c"><svg viewBox="0 0 24 24"><path d="M12 2 L13 11 L22 12 L13 13 L12 22 L11 13 L2 12 L11 11 Z" fill="var(--rose-deep)"/></svg></div>
+    <div class="sparkle spark-d"><svg viewBox="0 0 24 24"><path d="M12 0 L14 10 L24 12 L14 14 L12 24 L10 14 L0 12 L10 10 Z" fill="var(--gold)"/></svg></div>
+
+    <!-- floral sprigs -->
+    <div class="flora" style="top:16%; left:16%; width:11%; transform:rotate(-12deg);">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M40 70 C40 50 34 38 22 24" stroke="var(--ink)" stroke-width="1.6" fill="none"/>
+        <path d="M30 46 C24 42 20 44 18 50" stroke="var(--ink)" stroke-width="1.4" fill="none"/>
+        <path d="M34 34 C40 30 44 32 44 38" stroke="var(--ink)" stroke-width="1.4" fill="none"/>
+        <g transform="translate(20,20)">
+          <circle cx="0" cy="-7" r="6" fill="var(--rose)" opacity="0.85"/>
+          <circle cx="6.6" cy="-2" r="6" fill="var(--rose)" opacity="0.85"/>
+          <circle cx="4" cy="6.6" r="6" fill="var(--rose)" opacity="0.85"/>
+          <circle cx="-4" cy="6.6" r="6" fill="var(--rose)" opacity="0.85"/>
+          <circle cx="-6.6" cy="-2" r="6" fill="var(--rose)" opacity="0.85"/>
+          <circle cx="0" cy="0" r="4" fill="var(--gold)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="flora" style="bottom:15%; right:14%; width:9%; transform:rotate(18deg);">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M40 70 C40 50 46 38 58 26" stroke="var(--ink)" stroke-width="1.6" fill="none"/>
+        <g transform="translate(58,22)">
+          <circle cx="0" cy="-6" r="5" fill="var(--gold)" opacity="0.9"/>
+          <circle cx="5.6" cy="-1.8" r="5" fill="var(--gold)" opacity="0.9"/>
+          <circle cx="3.4" cy="5.6" r="5" fill="var(--gold)" opacity="0.9"/>
+          <circle cx="-3.4" cy="5.6" r="5" fill="var(--gold)" opacity="0.9"/>
+          <circle cx="-5.6" cy="-1.8" r="5" fill="var(--gold)" opacity="0.9"/>
+          <circle cx="0" cy="0" r="3.4" fill="var(--rose-deep)"/>
+        </g>
+        <path d="M46 50 C40 48 38 52 40 56" stroke="var(--ink)" stroke-width="1.2" fill="none"/>
+      </svg>
+    </div>
+
+    <!-- washi tape accents -->
+    <div class="washi" style="top:-8px; left:8%; width:70px; transform:rotate(-6deg);"></div>
+    <div class="washi gold" style="bottom:-8px; right:10%; width:80px; transform:rotate(5deg);"></div>
+
+    <div class="frame-inner">
+      <div class="rule"><span></span><span></span></div>
+      <h1 class="hero-title">Creative<br>Portfolio</h1>
+      <div class="rule"><span></span><span></span></div>
+      <div class="name-badge">Navami · Ajay</div>
+    </div>
+  </div>
+  <div class="scroll-cue"><div class="stem"></div>Scroll</div>
+</section>
+
+<div class="torn-divider"></div>
+
+<!-- ============ ABOUT ============ -->
+<section id="about">
+  <div class="about-wrap">
+    <div>
+      <div class="eyebrow">About</div>
+      <h2 class="section-title">Hi, I'm Navami.</h2>
+      <p class="section-lead">A little bit of everything lives here — sketches, ideas, and finished pieces, all made with the same pencil-and-paper honesty as the cover of this book.</p>
+      <div class="stat-row">
+        <div class="stat"><div class="num">24+</div><div class="label">Pieces made</div></div>
+        <div class="stat"><div class="num">6</div><div class="label">Mediums explored</div></div>
+        <div class="stat"><div class="num">3yrs</div><div class="label">Sketchbooks filled</div></div>
+      </div>
+    </div>
+    <div class="about-card" style="transform:rotate(-1deg);">
+      <div class="washi sage" style="top:-13px; left:30px; width:70px; transform:rotate(-4deg);"></div>
+      <div class="flora" style="bottom:-16px; left:-14px; width:56px; transform:rotate(-10deg);">
+        <svg viewBox="0 0 80 80" fill="none">
+          <path d="M40 74 C40 54 34 40 20 26" stroke="var(--ink)" stroke-width="1.6" fill="none"/>
+          <g transform="translate(20,22)">
+            <circle cx="0" cy="-7" r="6.5" fill="var(--rose)" opacity="0.9"/>
+            <circle cx="7" cy="-2" r="6.5" fill="var(--rose)" opacity="0.9"/>
+            <circle cx="4.3" cy="7" r="6.5" fill="var(--rose)" opacity="0.9"/>
+            <circle cx="-4.3" cy="7" r="6.5" fill="var(--rose)" opacity="0.9"/>
+            <circle cx="-7" cy="-2" r="6.5" fill="var(--rose)" opacity="0.9"/>
+            <circle cx="0" cy="0" r="4.2" fill="var(--gold)"/>
+          </g>
+          <path d="M30 50 C24 46 20 48 20 54" stroke="var(--ink)" stroke-width="1.3" fill="none"/>
+        </svg>
+      </div>
+      <p>This portfolio is a working sketchbook turned into a page — every doodle from the cover, the cat, the checkerboard corners, the sparkles, and the butterfly, carried through as the visual language of the whole site.</p>
+      <p>Each section below is a placeholder frame, ready for <strong>your real work</strong>: swap in project images, write-ups, and links whenever you're ready to fill it in.</p>
+    </div>
+  </div>
+</section>
+
+<div class="torn-divider"></div>
+
+<!-- ============ SKILLS ============ -->
+<section id="skills">
+  <div class="eyebrow">Toolkit</div>
+  <h2 class="section-title">What I work with</h2>
+  <p class="section-lead" style="margin-bottom:34px;">Edit these chips to match your own tools, styles, or software.</p>
+  <div class="skills-wrap">
+    <div class="skill-chip">🌼 Sketching</div>
+    <div class="skill-chip">Illustration</div>
+    <div class="skill-chip">🌸 Digital Painting</div>
+    <div class="skill-chip">Typography</div>
+    <div class="skill-chip">Character Design</div>
+    <div class="skill-chip">🌷 Layout &amp; Composition</div>
+    <div class="skill-chip">Color Theory</div>
+    <div class="skill-chip">Procreate</div>
+    <div class="skill-chip">🌿 Photoshop</div>
+  </div>
+</section>
+
+<div class="torn-divider"></div>
+
+<!-- ============ WORK ============ -->
+<section id="work">
+  <div class="eyebrow">Selected Work</div>
+  <h2 class="section-title">A few pieces</h2>
+  <p class="section-lead" style="margin-bottom:10px;">Placeholder project cards — replace the icon, title, and description with your own pieces.</p>
+
+  <div class="work-grid">
+
+    <div class="work-card">
+      <div class="work-thumb">
+        <span class="work-tag">Sketch</span>
+        <svg viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="34" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+          <path d="M32 55 Q50 25 68 55" stroke="var(--rose-deep)" stroke-width="2.4" fill="none"/>
+        </svg>
+      </div>
+      <div class="work-body">
+        <h3>Project One</h3>
+        <p>A short description of this piece — the idea behind it, medium used, and what made it fun to make.</p>
+      </div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-thumb">
+        <span class="work-tag">Design</span>
+        <svg viewBox="0 0 100 100" fill="none">
+          <rect x="22" y="22" width="56" height="56" stroke="var(--ink)" stroke-width="2" rx="4"/>
+          <rect x="34" y="34" width="32" height="32" stroke="var(--gold)" stroke-width="2.4" rx="2"/>
+        </svg>
+      </div>
+      <div class="work-body">
+        <h3>Project Two</h3>
+        <p>A short description of this piece — the idea behind it, medium used, and what made it fun to make.</p>
+      </div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-thumb">
+        <span class="work-tag">Painting</span>
+        <svg viewBox="0 0 100 100" fill="none">
+          <path d="M20 70 Q35 30 50 70 Q65 30 80 70" stroke="var(--ink)" stroke-width="2" fill="none"/>
+          <circle cx="50" cy="30" r="6" fill="var(--rose)"/>
+        </svg>
+      </div>
+      <div class="work-body">
+        <h3>Project Three</h3>
+        <p>A short description of this piece — the idea behind it, medium used, and what made it fun to make.</p>
+      </div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-thumb">
+        <span class="work-tag">Concept</span>
+        <svg viewBox="0 0 100 100" fill="none">
+          <polygon points="50,20 80,50 50,80 20,50" stroke="var(--ink)" stroke-width="2" fill="none"/>
+          <circle cx="50" cy="50" r="10" fill="var(--gold)" opacity="0.7"/>
+        </svg>
+      </div>
+      <div class="work-body">
+        <h3>Project Four</h3>
+        <p>A short description of this piece — the idea behind it, medium used, and what made it fun to make.</p>
+      </div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-thumb">
+        <span class="work-tag">Type</span>
+        <svg viewBox="0 0 100 100" fill="none">
+          <text x="50" y="62" text-anchor="middle" font-family="Caveat" font-size="46" fill="var(--ink)">Aa</text>
+        </svg>
+      </div>
+      <div class="work-body">
+        <h3>Project Five</h3>
+        <p>A short description of this piece — the idea behind it, medium used, and what made it fun to make.</p>
+      </div>
+    </div>
+
+    <div class="work-card">
+      <div class="work-thumb">
+        <span class="work-tag">Study</span>
+        <svg viewBox="0 0 100 100" fill="none">
+          <path d="M25 25 L75 75 M75 25 L25 75" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="50" cy="50" r="26" stroke="var(--rose-deep)" stroke-width="2" fill="none" stroke-dasharray="3 5"/>
+        </svg>
+      </div>
+      <div class="work-body">
+        <h3>Project Six</h3>
+        <p>A short description of this piece — the idea behind it, medium used, and what made it fun to make.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact">
+  <div class="contact-frame">
+    <div class="corner-mini tl"><div class="checker-grid" id="checkerMini1"></div></div>
+    <div class="corner-mini br"><div class="checker-grid" id="checkerMini2"></div></div>
+    <div class="flora" style="top:8%; left:6%; width:52px; transform:rotate(-16deg);">
+      <svg viewBox="0 0 80 80" fill="none">
+        <g transform="translate(30,30)">
+          <circle cx="0" cy="-7" r="6.5" fill="var(--rose)" opacity="0.9"/>
+          <circle cx="7" cy="-2" r="6.5" fill="var(--rose)" opacity="0.9"/>
+          <circle cx="4.3" cy="7" r="6.5" fill="var(--rose)" opacity="0.9"/>
+          <circle cx="-4.3" cy="7" r="6.5" fill="var(--rose)" opacity="0.9"/>
+          <circle cx="-7" cy="-2" r="6.5" fill="var(--rose)" opacity="0.9"/>
+          <circle cx="0" cy="0" r="4.2" fill="var(--gold)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="flora" style="bottom:10%; right:7%; width:44px; transform:rotate(12deg);">
+      <svg viewBox="0 0 80 80" fill="none">
+        <g transform="translate(40,40)">
+          <circle cx="0" cy="-6" r="5.5" fill="var(--gold)" opacity="0.9"/>
+          <circle cx="5.9" cy="-1.9" r="5.5" fill="var(--gold)" opacity="0.9"/>
+          <circle cx="3.6" cy="5.9" r="5.5" fill="var(--gold)" opacity="0.9"/>
+          <circle cx="-3.6" cy="5.9" r="5.5" fill="var(--gold)" opacity="0.9"/>
+          <circle cx="-5.9" cy="-1.9" r="5.5" fill="var(--gold)" opacity="0.9"/>
+          <circle cx="0" cy="0" r="3.6" fill="var(--rose-deep)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="washi gold" style="top:22px; left:-10px; width:70px; transform:rotate(-45deg);"></div>
+    <div class="eyebrow" style="justify-content:center;">Get in touch</div>
+    <h2>Let's make<br>something together</h2>
+    <p>Open to collaborations, commissions, and new ideas.</p>
+    <div class="cta-row">
+      <a class="btn btn-solid" href="mailto:hello@example.com">Email me</a>
+      <a class="btn btn-outline" href="#work">See my work</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Handmade with a pencil and a browser, by <span>Navami Ajay</span> · 2026
+</footer>
+
+<script>
+  // Build checkerboard corner patterns
+  function buildChecker(id, cols, rows){
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    el.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    for(let r=0; r<rows; r++){
+      for(let c=0; c<cols; c++){
+        const cell = document.createElement('span');
+        if((r+c) % 2 === 0){ cell.classList.add('on'); }
+        el.appendChild(cell);
+      }
+    }
+  }
+  buildChecker('checkerTL', 6, 5);
+  buildChecker('checkerBL', 5, 6);
+  buildChecker('checkerMini1', 4, 4);
+  buildChecker('checkerMini2', 4, 4);
+</script>
+
+</body>
+</html>
